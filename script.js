@@ -19,8 +19,9 @@ function card(a){var w=a[0].split(" "),ini=w[0][0]+w[w.length-1][0];
  return '<div class="person"><div class="av" aria-hidden="true">'+ini+'</div><div><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div></div>'}
 function row(items,rev){var h=items.map(card).join("");return '<div class="marq"><div class="track'+(rev?' rev':'')+'">'+h+h+'</div></div>'}
 document.getElementById("alumni-list").innerHTML=row(A.slice(0,13),0)+row(A.slice(13),1);
+var L={"BCG":["bcg",46],"McKinsey & Company":["mckinsey",58,0,"png"],"Kotak Investment Banking":["kotak",40,0,"png"],"Bain & Company":["bain",22],"Goldman Sachs":["goldman-sachs",42],"EY":["ey",46],"Flipkart":["flipkart",40,1],"KPMG":["kpmg",34],"Nomura":["nomura",24],"Wells Fargo":["wells-fargo",22],"Bloomberg":["bloomberg",24]};
 var F=["BCG","Bain & Company","McKinsey & Company","Kearney","Goldman Sachs","EY","Flipkart","KPMG","PwC","Avendus","Navi","Nomura","Wells Fargo","Bloomberg","Kotak Investment Banking","Info Edge Ventures"];
-var fh=F.map(function(n){return '<span class="co">'+esc(n)+'</span>'}).join("");
+var fh=F.map(function(n){var l=L[n];if(!l)return '<span class="co">'+esc(n)+'</span>';return '<span class="co logo" title="'+esc(n)+'"><img src="assets/logos/'+l[0]+'.'+(l[3]||'svg')+'?v=3" alt="'+esc(n)+'" style="height:'+l[1]+'px" loading="lazy" decoding="async">'+(l[2]?'<b>'+esc(n)+'</b>':'')+'</span>'}).join("");
 document.getElementById("fam").innerHTML=fh+fh;
 var rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add("in");io.unobserve(t);setTimeout(function(){t.classList.remove("rv","in")},1000)}})},{threshold:.12});
@@ -42,3 +43,9 @@ h.addEventListener("pointerleave",function(){m.x=m.y=-1e3});
 new IntersectionObserver(function(es){vis=es[0].isIntersecting}).observe(h)})();
 var bar=document.getElementById("bar");
 addEventListener("scroll",function(){var h=document.documentElement.scrollHeight-innerHeight;bar.style.transform="scaleX("+(h>0?scrollY/h:0)+")"},{passive:true});
+
+(function(){var g=document.getElementById("clients");if(!g)return;
+g.addEventListener("pointermove",function(e){var r=g.getBoundingClientRect();g.style.setProperty("--x",e.clientX-r.left+"px");g.style.setProperty("--y",e.clientY-r.top+"px")});
+g.addEventListener("pointerleave",function(){g.style.setProperty("--x","-999px");g.style.setProperty("--y","-999px")});
+if(rm||!("IntersectionObserver" in window)){g.classList.add("on");return}
+new IntersectionObserver(function(es,o){if(es[0].isIntersecting){g.classList.add("on");o.disconnect()}},{threshold:.15}).observe(g)})();
